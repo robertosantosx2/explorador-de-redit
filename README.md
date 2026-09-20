@@ -4,10 +4,11 @@ Extrae **hilos completos** de Reddit (post + comentarios) y los convierte en un 
 
 ## Características
 
-- **Interfaz web** moderna y sencilla
+- Interfaz web moderna
 - Funciona **con o sin credenciales**
-- Previsualización del Markdown antes de descargar
-- Guarda las credenciales en el navegador (localStorage) si lo deseas
+- Previsualización del Markdown
+- Guarda credenciales en el navegador (opcional)
+- **Historial de hilos explorados** (persistente en tu equipo)
 - Script CLI también disponible
 
 ---
@@ -28,43 +29,37 @@ python app.py
 
 Abre **http://127.0.0.1:5000**
 
+### Historial
+
+Cada hilo que extraes (previsualización o descarga) se guarda automáticamente:
+
+- Título, URL, fecha y modo usado
+- Puedes **re-descargar** el `.md` sin volver a pedir datos a Reddit
+- Botón **Reusar** para cargar la URL otra vez en el formulario
+- Eliminar entradas individuales o vaciar todo el historial
+
+Los datos se guardan en `history.json` y los Markdown en la carpeta `history_md/` (ambos ignorados por git).
+
 ### Dos modos de extracción
 
 | Modo | Credenciales | Ventajas | Limitaciones |
 |------|--------------|----------|--------------|
-| **Sin credenciales** | No | Instantáneo de probar | Solo comentarios visibles (no expande “load more”) |
+| **Sin credenciales** | No | Instantáneo de probar | Solo comentarios visibles |
 | **Con credenciales** | Sí (API gratuita) | Muchos más comentarios | Hay que crear una app en Reddit |
 
-### Cómo obtener credenciales (opcional pero recomendado)
+### Credenciales (opcional)
 
-1. Ve a [reddit.com/prefs/apps](https://www.reddit.com/prefs/apps)
-2. **Create App** → tipo **script**
-3. Redirect URI: `http://localhost:8080`
-4. Copia el **client_id** y el **secret**
-
-En la web marca “Recordar credenciales” y no tendrás que escribirlas cada vez.
+1. [reddit.com/prefs/apps](https://www.reddit.com/prefs/apps) → Create App → tipo **script**
+2. Redirect URI: `http://localhost:8080`
+3. Copia client_id y secret
 
 ---
 
 ## Script de terminal
 
 ```bash
-cp .env.example .env   # rellena tus credenciales
+cp .env.example .env
 python reddit_to_markdown.py "https://www.reddit.com/r/.../comments/.../"
-```
-
----
-
-## Estructura
-
-```
-explorador-de-redit/
-├── app.py                  # Interfaz web (Flask)
-├── reddit_to_markdown.py   # Script CLI
-├── requirements.txt
-├── .env.example
-├── .gitignore
-└── README.md
 ```
 
 ## Licencia
