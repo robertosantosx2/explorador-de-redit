@@ -1,107 +1,96 @@
 # explorador-de-redit
 
-Script para extraer **hilos completos** de Reddit (post + todos los comentarios anidados) y guardarlos en un archivo **Markdown** limpio y legible.
+Extrae **hilos completos** de Reddit (post + todos los comentarios anidados) y los convierte en un archivo **Markdown** descargable.
 
-## Características
+Disponible en dos modos:
 
-- Extrae el post original + **todo el árbol de comentarios**
-- Formato Markdown bien estructurado (con indentación de respuestas)
-- Incluye autor, puntuación, fecha y enlace original
-- Opción para limitar la profundidad de "More Comments" en hilos enormes
-- Fácil de usar desde la terminal
+1. **Interfaz web** (recomendada) – introduce la URL y descarga el `.md`
+2. **Script de terminal** – para automatización o uso avanzado
 
-## Requisitos
+---
 
-- Python 3.9+
-- Credenciales de la API de Reddit (gratuitas)
+## Interfaz web (más fácil)
 
-## Instalación
+### Instalación rápida
 
 ```bash
 git clone https://github.com/robertosantosx2/explorador-de-redit.git
 cd explorador-de-redit
 
-# Crear entorno virtual (recomendado)
 python -m venv .venv
-source .venv/bin/activate   # Linux/macOS
-# .venv\Scripts\activate    # Windows
+source .venv/bin/activate          # Linux / macOS
+# .venv\Scripts\activate           # Windows
 
 pip install -r requirements.txt
 ```
 
-## Configuración de credenciales
+### Ejecutar la web
 
-1. Ve a [https://www.reddit.com/prefs/apps](https://www.reddit.com/prefs/apps)
-2. Haz clic en **"Create App"** o **"Create Another App"**
+```bash
+python app.py
+```
+
+Abre el navegador en: **http://127.0.0.1:5000**
+
+1. Pega la URL del hilo de Reddit
+2. Introduce tus **Client ID** y **Client Secret** (se obtienen gratis en [reddit.com/prefs/apps](https://www.reddit.com/prefs/apps) creando una app de tipo **script**)
+3. Pulsa **Extraer y descargar Markdown**
+
+El archivo `.md` se descargará automáticamente.
+
+> **Nota de seguridad**: las credenciales solo se usan en tu máquina y no se guardan en ningún sitio.
+
+---
+
+## Cómo obtener las credenciales de Reddit
+
+1. Entra en [https://www.reddit.com/prefs/apps](https://www.reddit.com/prefs/apps)
+2. Pulsa **“Create App”** o **“Create Another App”**
 3. Rellena:
-   - **Name**: explorador-de-redit (o el que quieras)
+   - **Name**: cualquier nombre (ej. `explorador-de-redit`)
    - **Type**: **script**
    - **Redirect URI**: `http://localhost:8080`
-4. Copia el **client_id** (aparece debajo del nombre) y el **client_secret**
+4. Copia el **client_id** (aparece debajo del nombre de la app) y el **secret**
 
-Crea un archivo `.env` en la raíz del proyecto:
+---
+
+## Script de terminal (CLI)
+
+También puedes usar el script clásico:
 
 ```bash
+# Configura las variables de entorno o un archivo .env
 cp .env.example .env
+# Edita .env con tus credenciales
+
+python reddit_to_markdown.py "https://www.reddit.com/r/subreddit/comments/ID/titulo/"
+
+# Opciones útiles
+python reddit_to_markdown.py "URL" -o salida.md
+python reddit_to_markdown.py "URL" --limit 20
 ```
-
-Edita `.env` y pega tus datos:
-
-```env
-REDDIT_CLIENT_ID=tu_client_id
-REDDIT_CLIENT_SECRET=tu_client_secret
-REDDIT_USER_AGENT=script:explorador-de-redit:v1.0 (by u/tu_usuario)
-```
-
-## Uso
-
-```bash
-# Uso básico (genera el archivo automáticamente)
-python reddit_to_markdown.py "https://www.reddit.com/r/AskReddit/comments/abc123/titulo_del_post/"
-
-# Especificar nombre de salida
-python reddit_to_markdown.py "URL_DEL_HILO" -o mi_hilo.md
-
-# Limitar la expansión de comentarios ocultos (útil en hilos muy grandes)
-python reddit_to_markdown.py "URL_DEL_HILO" --limit 20
-```
-
-### Ejemplo de salida
-
-```markdown
-# Título del post
-
-**Subreddit:** r/ejemplo  
-**Autor:** u/usuario  
-**Puntuación:** 1520  
-**Comentarios:** 87  
-**Fecha:** 2025-03-15 14:22 UTC  
-**URL:** https://www.reddit.com/r/ejemplo/comments/...
 
 ---
 
-## Post
+## Estructura del proyecto
 
-Texto original del post...
+```
+explorador-de-redit/
+├── app.py                  # Interfaz web (Flask)
+├── reddit_to_markdown.py   # Script CLI
+├── requirements.txt
+├── .env.example
+├── .gitignore
+└── README.md
+```
 
 ---
-
-## Comentarios
-
-- **u/comentario1** (342 pts) · 2025-03-15 14:30 UTC
-  
-  Texto del comentario...
-
-  - **u/respuesta** (45 pts) · 2025-03-15 15:01 UTC
-    
-    Respuesta anidada...
-```
 
 ## Notas
 
-- En hilos con **miles de comentarios**, `replace_more(limit=None)` puede tardar varios minutos.
-- Usa `--limit 10` o `--limit 20` si solo necesitas los comentarios más visibles.
-- El script respeta los rate limits de Reddit.
+- En hilos con miles de comentarios la extracción puede tardar un poco. Usa el campo **Límite de "More Comments"** (por defecto 30) para acelerar.
+- El Markdown generado incluye título, autor, puntuación, fecha, cuerpo del post y todo el árbol de comentarios con indentación.
+- Las credenciales nunca se almacenan; solo se usan durante la petición.
 
 ## Licencia
 
